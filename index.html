@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>toptips</title>
+  <link rel="stylesheet" href="./styles/index.css">
+</head>
+<body>
+  <div style="padding-top:10rem;">
+    <a href="#open-toptips" data-message="test" data-type="error" rel="toptips:open">error</a>
+    <a href="#open-toptips" data-message="test" data-type="success" rel="toptips:open">success</a>
+    <a href="#open-toptips" data-message="test" data-type="info" rel="toptips:open">info</a>
+    <a href="javascript:click();">点我</button>
+  </div>
+  <script defer src="./jquery-3.6.0.min.js"></script>
+  <script defer src="./jquery.toptips.js"></script>
+  <script>
+    function click () {
+      new $.toptips({ type: 'success', message: '加载成功' })
+    }
+  </script>
+</body>
+</html>
