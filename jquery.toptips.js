@@ -67,11 +67,11 @@
             $.toptips.close()
         })
       }
-      // if (this.options.duration > 0) {
-      //   setTimeout(function() {
-      //     _this.close()
-      //   }, this.options.duration * 1000)
-      // }
+      if (this.options.duration > 0) {
+        setTimeout(function() {
+          _this.close()
+        }, this.options.duration * 1000)
+      }
     },
 
     close: function() {
@@ -96,9 +96,8 @@
     hide: function() {
       const _this = this
       this.$elm.trigger($.toptips.BEFORE_CLOSE, [this._ctx()])
-      selectCurrent()
       this.$elm.trigger($.toptips.CLOSE, [this._ctx()])
-      this.$elm.css('opacity', 1).animate({ opacity: 0 }, 200, function() {
+      this.$elm.css('opacity', 1).animate({ opacity: 0 }, 500, function() {
         _this.$elm.remove()
         this.$elm.trigger($.toptips.AFTER_CLOSE, [_this._ctx()])
       })

@@ -67,39 +67,22 @@
 }
 
 .toptips--animation {
-  animation-name: bounceInDown;
+  animation-name: fadeIn;
   animation-duration: 1s;
-  animation-fill-mode: both;
+  animation-fill-mode: none;
+  animation-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000);
 }
 
-@keyframes bounceInDown {
-  from,
-  60%,
-  75%,
-  90%,
-  to {
-      animation-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000);
-  }
+@keyframes fadeIn {
   0% {
-      opacity: 0;
-      transform: translate3d(0, -60px, 0);
-  }
-  50% {
-      transform: translate3d(0, -60px, 0);
-  }
-  60% {
-      opacity: 1;
-      transform: translate3d(0, 25px, 0);
-  }
-  75% {
-      transform: translate3d(0, -10px, 0);
-  }
-  90% {
-      transform: translate3d(0, 5px, 0);
-  }
-  to {
-      transform: none;
-  }
+		opacity: 0;
+	}
+	20% {
+		opacity: 0;
+	}
+	100% {
+		opacity: 1;
+	}
 }
 
 .toptips__message {
