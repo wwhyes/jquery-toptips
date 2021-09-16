@@ -41,7 +41,7 @@
     
     this.$elm = $(`<div class="toptips">
       <div class="toptips__icon"></div>
-      <pre class="toptips__message">${options.message}</pre>
+      <div class="toptips__message">${options.message}</div>
     </div>`)
     this.$body.append(this.$elm)
     this.open()
