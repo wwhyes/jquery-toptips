@@ -45,14 +45,17 @@
 
 /* toptips */
 .toptips-container {
+  display: flex;
+  flex-direction: column;
   position: fixed;
   z-index: 10000;
-  top: 0.5rem;
-  right: 0.5rem;
-  left: 0.5rem;
+  top: 0;
+  left: 0;
+  width: 100%;
 }
 
 .toptips {
+  margin: 0.5rem;
   padding: 0.5rem 1rem;
   display: flex;
   border-radius: 8px;
@@ -61,6 +64,42 @@
   font-weight: 700;
   flex-direction: row;
   align-items: center;
+}
+
+.toptips--animation {
+  animation-name: bounceInDown;
+  animation-duration: 1s;
+  animation-fill-mode: both;
+}
+
+@keyframes bounceInDown {
+  from,
+  60%,
+  75%,
+  90%,
+  to {
+      animation-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000);
+  }
+  0% {
+      opacity: 0;
+      transform: translate3d(0, -60px, 0);
+  }
+  50% {
+      transform: translate3d(0, -60px, 0);
+  }
+  60% {
+      opacity: 1;
+      transform: translate3d(0, 25px, 0);
+  }
+  75% {
+      transform: translate3d(0, -10px, 0);
+  }
+  90% {
+      transform: translate3d(0, 5px, 0);
+  }
+  to {
+      transform: none;
+  }
 }
 
 .toptips__message {

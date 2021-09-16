@@ -20,26 +20,29 @@
   }
   var selectCurrent = function() {
     var selected = false
-    for (var i = toptips.length-1; i >= 0; i--) {
-      if (toptips[i].$blocker) {
-        toptips[i].$blocker.toggleClass('current', !selected).toggleClass('behind', selected)
+    for (var i = toptips.length - 1; i >= 0; i--) {
+      if (toptips[i].$elm) {
+        toptips[i].$elm
+          .toggleClass('toptips--current', !selected)
+          .toggleClass('toptips--behind', selected)
+          .css('order', toptips.length - i)
         selected = true
       }
     }
   }
+  var $blocker = $('<div class="toptips-container"></div>').appendTo($('body'))
 
   $.toptips = function(options) {
     this.$body = $('body')
+    this.$blocker = $blocker
     this.options = $.extend({}, $.toptips.defaults, options)
-    this.options.doFade = !isNaN(parseInt(this.options.fadeDuration, 10))
-    this.$blocker = null
     if (this.options.closeExisting) {
       while ($.toptips.isActive())
         $.toptips.close() // Close any open toptips.
     }
     toptips.push(this)
     
-    this.$elm = $(`<div class="toptips">
+    this.$elm = $(`<div class="toptips toptips--current">
       <div class="toptips__icon"></div>
       <div class="toptips__message">${options.message}</div>
     </div>`)
@@ -51,82 +54,54 @@
     constructor: $.toptips,
 
     open: function() {
-      var m = this
-      this.block()
-      if(this.options.doFade) {
-        setTimeout(function() {
-          m.show()
-        }, this.options.fadeDuration * this.options.fadeDelay)
-      } else {
-        this.show()
-      }
+      var _this = this
+      this.show()
       $(document).off('keydown.toptips').on('keydown.toptips', function(event) {
         var current = getCurrent()
-        if (event.which === 27 && current.options.escapeClose) current.close()
+        if (event.which === 27 && current.options.escapeClose)
+          current.close()
       })
-      if (this.options.clickClose)
-        this.$blocker.click(function(e) {
+      if (this.options.clickClose) {
+        this.$elm.click(function(e) {
           if (e.target === this)
             $.toptips.close()
         })
+      }
+      // if (this.options.duration > 0) {
+      //   setTimeout(function() {
+      //     _this.close()
+      //   }, this.options.duration * 1000)
+      // }
     },
 
     close: function() {
       toptips.pop()
-      this.unblock()
       this.hide()
       if (!$.toptips.isActive())
         $(document).off('keydown.toptips')
     },
 
-    block: function() {
-      this.$elm.trigger($.toptips.BEFORE_BLOCK, [this._ctx()])
-      this.$blocker = $('<div class="' + this.options.blockerClass + ' current"></div>').appendTo(this.$body)
-      selectCurrent()
-      if(this.options.doFade) {
-        this.$blocker.css('opacity', 0).animate({ opacity: 1 }, this.options.fadeDuration)
-      }
-      this.$elm.trigger($.toptips.BLOCK, [this._ctx()])
-    },
-
-    unblock: function(now) {
-      if (!now && this.options.doFade) {
-        this.$blocker.fadeOut(this.options.fadeDuration, this.unblock.bind(this, true))
-      } else {
-        // this.$blocker.children().appendTo(this.$body)
-        this.$blocker.remove()
-        this.$blocker = null
-        selectCurrent()
-      }
-    },
-
     show: function() {
       this.$elm.trigger($.toptips.BEFORE_OPEN, [this._ctx()])
+      selectCurrent()
       if (this.options.showClose) {
         this.closeButton = $('<a href="#close-toptips" rel="toptips:close" class="toptips__close"></a>')
         this.$elm.append(this.closeButton)
       }
+      this.$elm.addClass('toptips--animation')
       this.$elm.addClass(this.options.type).appendTo(this.$blocker)
-      if(this.options.doFade) {
-        this.$elm.css({ opacity: 0 }).animate({ opacity: 1 }, this.options.fadeDuration)
-      }
       this.$elm.trigger($.toptips.OPEN, [this._ctx()])
     },
 
     hide: function() {
+      const _this = this
       this.$elm.trigger($.toptips.BEFORE_CLOSE, [this._ctx()])
-      if (this.closeButton) this.closeButton.remove()
-      var _this = this
-      if(this.options.doFade) {
-        this.$elm.fadeOut(this.options.fadeDuration, function () {
-          _this.$elm.trigger($.toptips.AFTER_CLOSE, [_this._ctx()])
-        })
-      } else {
-        this.$elm.hide(0, function () {
-          _this.$elm.trigger($.toptips.AFTER_CLOSE, [_this._ctx()])
-        })
-      }
+      selectCurrent()
       this.$elm.trigger($.toptips.CLOSE, [this._ctx()])
+      this.$elm.css('opacity', 1).animate({ opacity: 0 }, 200, function() {
+        _this.$elm.remove()
+        this.$elm.trigger($.toptips.AFTER_CLOSE, [_this._ctx()])
+      })
     },
 
     //Return context for custom events
@@ -153,18 +128,14 @@
   $.toptips.defaults = {
     message: '',
     type: 'info', // ['info', 'success', 'warning', 'error']
-    closeExisting: true,
+    closeExisting: false,
     escapeClose: true,
     clickClose: true,
-    blockerClass: "toptips-container",
     showClose: true,
-    fadeDuration: 200,   // Number of milliseconds the fade animation takes.
-    fadeDelay: 1.0        // Point during the overlay's fade-in that the toptips begins to fade in (.5 = 50%, 1.5 = 150%, etc.)
+    duration: 3 // 默认自动关闭延时，单位秒
   }
 
   // Event constants
-  $.toptips.BEFORE_BLOCK = 'toptips:before-block'
-  $.toptips.BLOCK = 'toptips:block'
   $.toptips.BEFORE_OPEN = 'toptips:before-open'
   $.toptips.OPEN = 'toptips:open'
   $.toptips.BEFORE_CLOSE = 'toptips:before-close'
